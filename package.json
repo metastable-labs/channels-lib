@@ -45,7 +45,8 @@
     "dev": "concurrently -c yellow,blue -n RLP,SRV \"npm:build:watch\" \"npm:serve\"",
     "build:types": "tsc --emitDeclarationOnly --project tsconfig.build.json",
     "build": "node esbuild.js",
-    "test": "jest --coverage ./test/"
+    "test": "jest --coverage ./test/",
+    "test:channel": "jest --coverage ./test/channels.test.ts"
   },
   "repository": {
     "type": "git",
@@ -97,6 +98,12 @@
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "prettier": "^3.1.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "ts-jest": "^29.1.1"
+  },
+  "dependencies": {
+    "@airstack/node": "^0.0.7",
+    "@apollo/client": "^3.10.5",
+    "graphql": "^16.8.2"
   }
 }
