@@ -45,9 +45,32 @@ const getChannelsCreatedByAnAddress = async (userAddress: `0x${string}`) => {
 
   const channelData = await fetchQuery(channelQuery);
 
-  console.log(channelData.data.FarcasterChannels.FarcasterChannel);
-
   return channelData;
 };
 
-export { getChannelsCreatedByAnAddress };
+const getCastsByChannel = async (channelUrl: string) => {
+  const castQuery = `query GetCastsInChannel {
+  FarcasterCasts(input: {blockchain: ALL, filter: {rootParentUrl: {_eq: "${channelUrl}"}}, limit: 50}) {
+    Cast {
+      castedAtTimestamp
+      url
+      text
+      numberOfReplies
+      numberOfRecasts
+      numberOfLikes
+      fid
+      castedBy {
+        profileName
+      }
+      channel {
+        name
+      }
+    }
+  }
+}`;
+
+  const castData = await fetchQuery(castQuery);
+  return castData;
+};
+
+export { getChannelsCreatedByAnAddress, getCastsByChannel };
