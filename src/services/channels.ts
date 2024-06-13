@@ -70,7 +70,14 @@ const getCastsByChannel = async (channelUrl: string) => {
 }`;
 
   const castData = await fetchQuery(castQuery);
-  return castData;
+  return castData.data?.FarcasterCasts.Cast;
 };
 
-export { getChannelsCreatedByAnAddress, getCastsByChannel };
+const getWeeklyCastsCount = async (channelUrl: string) => {
+  const oneWeekAgo = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
+  const casts = await getCastsByChannel(channelUrl);
+  const weeklyCasts = casts.filter((cast) => new Date(cast.timestamp * 1000) >= oneWeekAgo);
+  return weeklyCasts.length;
+};
+
+export { getChannelsCreatedByAnAddress, getCastsByChannel, getWeeklyCastsCount };

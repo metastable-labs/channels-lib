@@ -1,6 +1,10 @@
 import { init } from '@airstack/node';
 import { config } from 'dotenv';
-import { getCastsByChannel, getChannelsCreatedByAnAddress } from './services/channels';
+import {
+  getCastsByChannel,
+  getChannelsCreatedByAnAddress,
+  getWeeklyCastsCount,
+} from './services/channels';
 
 config();
 export class LaunchboxClass {
@@ -13,6 +17,12 @@ export class LaunchboxClass {
   }
   public async getCasts(channelUrl: string) {
     const result = await getCastsByChannel(channelUrl);
+
+    return result;
+  }
+
+  public async getNumberOfWeeklyCasts(channelUrl: string) {
+    const result = await getWeeklyCastsCount(channelUrl);
 
     return result;
   }

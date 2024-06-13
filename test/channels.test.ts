@@ -19,7 +19,13 @@ describe('Launchbox SDK Test', () => {
 
   it('should get casts in a particular channel', async () => {
     const response = await launchbox.getCasts(channelUrl);
-    console.log(response.data.FarcasterCasts.Cast);
+    console.log(response);
+    expect(response).toBeDefined();
+  }, 200000);
+
+  it('should get number of weekly casts in a particular channel', async () => {
+    const response = await launchbox.getNumberOfWeeklyCasts(channelUrl);
+    console.log(response);
     expect(response).toBeDefined();
   }, 200000);
 });
