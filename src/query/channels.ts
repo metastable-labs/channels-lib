@@ -1,5 +1,4 @@
 import { fetchQuery } from '@airstack/node';
-import { gql } from '@apollo/client';
 
 const getChannelsCreatedByAnAddress = async (userAddress: `0x${string}`) => {
   // get user details by address
@@ -80,4 +79,5 @@ const getWeeklyCastsCount = async (channelUrl: string) => {
   return weeklyCasts.length;
 };
 
-export { getChannelsCreatedByAnAddress, getCastsByChannel, getWeeklyCastsCount };
+export { getCastsByChannel, getChannelsCreatedByAnAddress, getWeeklyCastsCount };
+
