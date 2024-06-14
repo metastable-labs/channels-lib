@@ -1,55 +1,98 @@
-import { fetchQuery } from '@airstack/node';
+/**
+ * Interface representing the channel details.
+ */
+export interface Channel {
+  createdAtTimestamp: string;
+  channelId: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  leadIds: string[];
+  url: string;
+  dappName: string
+}
 
-const getChannelsCreatedByAnAddress = async (userAddress: `0x${string}`) => {
-  // get user details by address
-  const userQuery = `query GetFarcasterUserDetailsByAddress {
-  Socials(
-    input: {filter: {userAssociatedAddresses: {_eq: "${userAddress}"}, dappName: {_eq: farcaster}}, blockchain: ethereum}
-  ) {
-    Social {
-      dappName
-      profileName
-      userAddress
-      userCreatedAtBlockTimestamp
-      userCreatedAtBlockNumber
-      userRecoveryAddress
-      connectedAddresses {
-        address
-        blockchain
-      }
-    }
-  }
-}`;
 
-  const userData = await fetchQuery(userQuery);
+/**
+ * Interface representing the profile of the user who casted the post.
+ */
+export interface CastedBy {
+  /**
+   * The profile name of the user.
+   */
+  profileName: string;
+}
 
-  // get channel data
-  const profileName = userData.data?.Socials?.Social[0].profileName;
-  const channelQuery = `query GetFarcasterChannelsCreatedByUser {
-  FarcasterChannels(
-    input: {blockchain: ALL, filter: {leadIdentity: {_eq: "fc_fname:${profileName}"}}, limit: 50}
-  ) {
-    FarcasterChannel {
-      createdAtTimestamp
-      channelId
-      name
-      description
-      imageUrl
-      leadIds
-      url
-      followerCount
-    }
-  }
-}`;
+/**
+ * Interface representing a single cast in the Farcaster Cast.
+ */
+export interface Cast {
+  /**
+   * The timestamp when the cast was made.
+   */
+  castedAtTimestamp: string;
+  /**
+   * The URL of the cast.
+   */
+  url: string;
+  /**
+   * The text content of the cast.
+   */
+  text: string;
+  /**
+   * The number of replies to the cast.
+   */
+  numberOfReplies: number;
+  /**
+   * The number of recasts (shares) of the cast.
+   */
+  numberOfRecasts: number;
+  /**
+   * The number of likes the cast received.
+   */
+  numberOfLikes: number;
+  /**
+   * The unique identifier (FID) of the cast.
+   */
+  fid: string;
+  /**
+   * The profile of the user who casted the post.
+   */
+  castedBy: CastedBy;
+  /**
+   * The channel details where the cast was made.
+   */
+  channel: Channel;
+}
 
-  const channelData = await fetchQuery(channelQuery);
+/**
+ * Interface representing the Farcaster casts query response.
+ */
+export interface FarcasterCastsResponse {
+  /**
+   * The data object containing the FarcasterCasts result.
+   */
+  data: {
+    /**
+     * The FarcasterCasts object containing the list of casts.
+     */
+    FarcasterCasts: {
+      /**
+       * The list of casts in the channel.
+       */
+      Cast: Cast[];
+    };
+  };
+}
 
-  return channelData;
-};
 
-const getCastsByChannel = async (channelUrl: string) => {
-  const castQuery = `query GetCastsInChannel {
-  FarcasterCasts(input: {blockchain: ALL, filter: {rootParentUrl: {_eq: "${channelUrl}"}}, limit: 50}) {
+
+
+
+
+export const getChannelCastsQuery = (channelUrl: string, limit: number) => `
+query GetCastsInChannel {
+  FarcasterCasts(input: {blockchain: ALL, filter: {rootParentUrl: {_eq: ${channelUrl}}}, limit: ${limit}}) {
     Cast {
       castedAtTimestamp
       url
@@ -60,24 +103,52 @@ const getCastsByChannel = async (channelUrl: string) => {
       fid
       castedBy {
         profileName
+        userAddress
       }
       channel {
         name
+        createdAtTimestamp
+        channelId
+        name
+        description
+        imageUrl
+        leadIds
+        url
+        dappName
+        followerCount
       }
     }
   }
-}`;
+}
+`;
 
-  const castData = await fetchQuery(castQuery);
-  return castData.data?.FarcasterCasts.Cast;
-};
 
-const getWeeklyCastsCount = async (channelUrl: string) => {
-  const oneWeekAgo = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
-  const casts = await getCastsByChannel(channelUrl);
-  const weeklyCasts = casts.filter((cast) => new Date(cast.timestamp * 1000) >= oneWeekAgo);
-  return weeklyCasts.length;
-};
 
-export { getCastsByChannel, getChannelsCreatedByAnAddress, getWeeklyCastsCount };
 
+export interface ChannelsByUserResponse {
+  data: {
+    FarcasterChannels: {
+      FarcasterChannel: Channel[];
+    };
+  };
+}
+
+
+export const getChannelsByUserQuery = (name: string) => `
+GetFarcasterChannelsCreatedByUser {
+  FarcasterChannels(
+    input: {blockchain: ALL, filter: {leadIdentity: {_eq: "fc_fname:${name}"}}, limit: 50}
+  ) {
+    FarcasterChannel {
+      createdAtTimestamp
+      channelId
+      name
+      description
+      imageUrl
+      leadIds
+      dappName
+      url
+      followerCount
+    }
+  }
+}`
