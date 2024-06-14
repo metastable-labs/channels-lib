@@ -3,23 +3,23 @@ import { Participant } from "./tokens";
 
 
 export interface FarcasterChannelParticipant {
-    participant: Participant;
+  participant: Participant;
 }
 
 
 export interface FarcasterChannelParticipantsResponse {
-    data: {
-        FarcasterChannelParticipants: {
-            FarcasterChannelParticipant: FarcasterChannelParticipant[];
-        };
-        FarcasterCasts: {
-            Cast: Omit<Cast, "channel">[];
-        };
+  data: {
+    FarcasterChannelParticipants: {
+      FarcasterChannelParticipant: FarcasterChannelParticipant[];
     };
+    FarcasterCasts: {
+      Cast: Omit<Cast, "channel">[];
+    };
+  };
 }
 
 
-export const getSocialScoresOfAllChannelFollowersQuery = (channelName: string, token: `0x${string}`, blockchain: string) => `
+export const getSocialScoresOfAllChannelFollowersQuery = (channelName: string, token: `0x${string}`, chain: string) => `
 query GetSocialScoresOfAllChannelFollowers {
     FarcasterChannelParticipants(
       input: {filter: {channelActions: {_eq: follow}, channelId: {_eq: ${channelName}}}, blockchain: ALL, limit: 50}
@@ -30,7 +30,7 @@ query GetSocialScoresOfAllChannelFollowers {
           userAddress
           userAddressDetails {
             tokenBalances(
-              input: {blockchain: ${blockchain}, filter: {tokenAddress: {_eq: ${token}}}}
+              input: {blockchain: ${chain}, filter: {tokenAddress: {_eq: ${token}}}}
             ) {
               amount
               token {

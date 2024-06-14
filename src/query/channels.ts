@@ -90,9 +90,9 @@ export interface FarcasterCastsResponse {
 
 
 
-export const getChannelCastsQuery = (channelUrl: string, limit: number) => `
+export const getChannelCastsQuery = (channelUrl: string, limit: number = 50) => `
 query GetCastsInChannel {
-  FarcasterCasts(input: {blockchain: ALL, filter: {rootParentUrl: {_eq: ${channelUrl}}}, limit: ${limit}}) {
+  FarcasterCasts(input: {blockchain: ALL, filter: {rootParentUrl: {_eq: "${channelUrl}"}}, limit: ${limit}}) {
     Cast {
       castedAtTimestamp
       url
@@ -135,7 +135,7 @@ export interface ChannelsByUserResponse {
 
 
 export const getChannelsByUserQuery = (name: string) => `
-GetFarcasterChannelsCreatedByUser {
+query GetFarcasterChannelsCreatedByUser {
   FarcasterChannels(
     input: {blockchain: ALL, filter: {leadIdentity: {_eq: "fc_fname:${name}"}}, limit: 50}
   ) {

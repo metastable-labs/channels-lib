@@ -16,9 +16,12 @@ export default class Launchbox {
   public async getChannelsByUserAddress(owner: `0x${string}`): Promise<ChannelsByUserResponse['data']> {
     try {
       const { data: { Socials: { Social: socials } } }: UserInfoResponse = await fetchQuery(getUserInfoQuery(owner))
+      console.log(socials[0])
       const { data }: ChannelsByUserResponse = await fetchQuery(getChannelsByUserQuery(socials[0].profileName))
+      console.log(data)
       return data
     } catch (error) {
+      console.log(error)
       throw new Error('Failed to channels created by user');
     }
   }
@@ -37,6 +40,8 @@ export default class Launchbox {
 
       // Ensure the response structure is as expected
       if (!response?.data?.FarcasterCasts?.Cast) {
+        console.log(response);
+
         throw new Error('Unexpected response structure');
       }
 
@@ -84,10 +89,10 @@ export default class Launchbox {
  * @returns {Promise<Participant[]>} The participants with their token balances.
  * @throws Will throw an error if the query fails.
  */
-  getParticipantTokenBalances = async ({
+  public async getParticipantTokenBalances({
     channelName,
     tokenAddress
-  }: ParticipantTokenBalancesParams): Promise<Participant[]> => {
+  }: ParticipantTokenBalancesParams): Promise<Participant[]> {
     try {
 
       const response: ChannelPaticipantsBalanceResponse = await fetchQuery(getChannelParticipantsBalanceQuery(channelName, tokenAddress));
@@ -108,9 +113,9 @@ export default class Launchbox {
   /**
    * getChannelSocialCapital
    */
-  public async getChannelSocialCapital(channelName: string, token?: `0x${string}`) {
+  public async getChannelSocialCapital(channelName: string, chain: string, token?: `0x${string}`,) {
     try {
-      const query = getSocialScoresOfAllChannelFollowersQuery(channelName, token, "base")
+      const query = getSocialScoresOfAllChannelFollowersQuery(channelName, token, chain)
       const { data }: FarcasterChannelParticipantsResponse = await fetchQuery(query)
       return data
     } catch (error) {
