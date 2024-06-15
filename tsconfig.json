@@ -1,20 +1,20 @@
 {
   "ts-node": {
     "compilerOptions": {
-      "target": "es2018",
+      "target": "ES2020",
       "module": "commonjs",
       "strict": true,
       "esModuleInterop": true
     }
   },
   "compilerOptions": {
-    "types": ["jest"],
-    "outDir": "./dist",
-    "declaration": true,
-    "importsNotUsedAsValues": "remove",
-    "lib": ["ES2021", "DOM"],
-    "module": "ES2020",
-    "moduleResolution": "node"
+    "target": "ES2020",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "lib": ["ES2021"],
+    "moduleResolution": "node",
+    "types": ["jest"]
   },
   "include": ["src/**/*.ts"]
 }
