@@ -19,48 +19,59 @@ export interface FarcasterChannelParticipantsResponse {
 }
 
 
-export const getSocialScoresOfAllChannelFollowersQuery = (channelName: string, token: `0x${string}`, chain: string) => `
+export const getSocialScoresOfAllChannelFollowersQuery = (channelName: string, token: `0x${string}`, chain: string, limit: number) => `
 query GetSocialScoresOfAllChannelFollowers {
-    FarcasterChannelParticipants(
-      input: {filter: {channelActions: {_eq: follow}, channelId: {_eq: ${channelName}}}, blockchain: ALL, limit: 50}
-    ) {
-      FarcasterChannelParticipant {
-        participant {
-          profileName
-          userAddress
-          userAddressDetails {
-            tokenBalances(
-              input: {blockchain: ${chain}, filter: {tokenAddress: {_eq: ${token}}}}
-            ) {
-              amount
-              token {
-                address
-                name
-              }
+  FarcasterChannelParticipants(
+    input: {filter: {channelActions: {_eq: follow}, channelId: {_eq: "${channelName}"}}, limit: ${limit}, blockchain: ALL}
+  ) {
+    FarcasterChannelParticipant {
+      participant {
+        profileName
+        userAddress
+        userAssociatedAddressDetails {
+          tokenBalances(
+            input: {filter: {tokenAddress: {_eq: "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed"}}, blockchain: ${chain}}
+          ) {
+            formattedAmount
+            token {
+              address
+              name
             }
           }
-          socialCapital {
-            socialCapitalScore
-            socialCapitalRank
+          addresses
+        }
+        userAddressDetails {
+          tokenBalances(
+            input: {filter: {tokenAddress: {_eq: "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"}}, blockchain: ${chain}}
+          ) {
+            amount
+            token {
+              address
+              name
+            }
           }
         }
-      }
-    }
-    FarcasterCasts(
-      input: {filter: {rootParentUrl: {_eq: $"https://warpcast.com/~/channel/${channelName}"}}, blockchain: ALL}
-    ) {
-      Cast {
-        castedBy {
-          profileName
-          userAddress
+        socialCapital {
+          socialCapitalScore
+          socialCapitalRank
         }
-        numberOfLikes
-        numberOfRecasts
-        text
-        url
-        numberOfReplies
-        createdAtTimestamp
       }
     }
   }
+  FarcasterCasts(
+    input: {filter: {rootParentUrl: {_eq: "https://warpcast.com/~/channel/${channelName}"}}, blockchain: ALL}
+  ) {
+    Cast {
+      castedBy {
+        profileName
+        userAddress
+      }
+      numberOfLikes
+      numberOfRecasts
+      text
+      url
+      numberOfReplies
+    }
+  }
+}
 `

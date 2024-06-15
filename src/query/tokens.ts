@@ -32,13 +32,10 @@ export interface Token {
  * Interface for the token balance details.
  */
 export interface TokenBalance {
-  amount: string;
+  formattedAmount: string;
   token: {
     address: string;
     name: string;
-    decimals: string;
-    blockchain: string
-    totalSupply: string;
   };
 }
 
@@ -61,10 +58,15 @@ export interface SocialCapital {
 export interface Participant {
   userAddress: string;
   profileName: string;
+  userAssociatedAddressDetails: UserAssociatedAddressDetail[]
   userAddressDetails: UserAddressDetails;
   socialCapital: SocialCapital;
 }
 
+export interface UserAssociatedAddressDetail {
+  addresses: string[];
+  tokenBalances: TokenBalance[]
+}
 
 export interface ChannelWithParticipants extends Pick<Channel, "channelId"> {
   participants: {

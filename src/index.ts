@@ -16,12 +16,9 @@ export default class Launchbox {
   public async getChannelsByUserAddress(owner: `0x${string}`): Promise<ChannelsByUserResponse['data']> {
     try {
       const { data: { Socials: { Social: socials } } }: UserInfoResponse = await fetchQuery(getUserInfoQuery(owner))
-      console.log(socials[0])
       const { data }: ChannelsByUserResponse = await fetchQuery(getChannelsByUserQuery(socials[0].profileName))
-      console.log(data)
       return data
     } catch (error) {
-      console.log(error)
       throw new Error('Failed to channels created by user');
     }
   }
@@ -40,8 +37,6 @@ export default class Launchbox {
 
       // Ensure the response structure is as expected
       if (!response?.data?.FarcasterCasts?.Cast) {
-        console.log(response);
-
         throw new Error('Unexpected response structure');
       }
 
@@ -76,7 +71,6 @@ export default class Launchbox {
 
       return weeklyCasts.length;
     } catch (error) {
-      console.error('Failed to fetch weekly casts:', error);
       throw new Error('Failed to fetch weekly casts from the channel');
     }
   }
@@ -103,7 +97,6 @@ export default class Launchbox {
 
       return participants;
     } catch (error) {
-      console.error('Error fetching participant token balances:', error);
       throw error;
     }
   };
@@ -113,11 +106,34 @@ export default class Launchbox {
   /**
    * getChannelSocialCapital
    */
-  public async getChannelSocialCapital(channelName: string, chain: string, token?: `0x${string}`,) {
+  public async getChannelSocialCapital(channelName: string, chain: string = "base", token: `0x${string}`, limit: number = 50) {
     try {
-      const query = getSocialScoresOfAllChannelFollowersQuery(channelName, token, chain)
+      const query = getSocialScoresOfAllChannelFollowersQuery(channelName, token, chain, limit)
       const { data }: FarcasterChannelParticipantsResponse = await fetchQuery(query)
-      return data
+
+      const PARTICIPANTS = data.FarcasterChannelParticipants.FarcasterChannelParticipant;
+
+      const FARCASTS = data.FarcasterCasts.Cast
+
+      const socialScores = PARTICIPANTS.map(({ participant }, idx) => {
+        return participant.socialCapital.socialCapitalScore
+      })
+      const averageScore = socialScores.reduce((accumulator, currentValue) => accumulator + currentValue, 0) / socialScores.length;
+
+      const engagements = FARCASTS.map((f, idx) => {
+        return f.numberOfLikes
+      })
+      const averageEngagement = engagements.reduce((acc, curr) => acc + curr, 0) / engagements.length
+
+      const tokenHolders = PARTICIPANTS.filter(({ participant }) => {
+        return participant.userAssociatedAddressDetails.some(detail =>
+          detail.tokenBalances.some(tokenBalance =>
+            parseFloat(tokenBalance.formattedAmount) > 0 && tokenBalance.token.address.toLowerCase() === token.toLowerCase()
+          )
+        );
+      });
+      const score = (tokenHolders.length + (averageEngagement * 1000.0) + (averageScore * 1000.0)) / 500.0
+      return score
     } catch (error) {
       throw error
     }
