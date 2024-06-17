@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import Launchbox from '../src';
+import Launchbox from "../src";
 
 config();
 
