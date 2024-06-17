@@ -9,23 +9,25 @@ The Launchbox SDK provides a set of functions to interact with Farcaster channel
 To install the Launchbox SDK, you need to include it in your project. Use npm or yarn to install the package:
 
 ```sh
-npm install @airstack/node
+npm install channels-lib
 ```
 
 or using Yarn
 
 ```sh
-yarn add @airstack/node
+yarn install channels-lib
 ```
 
 ## Initialization
+
 To use the SDK, you need to initialize it with your API key and environment.
 
 ```ts
-import Launchbox from './launchbox';
+import Launchbox from 'launchbox';
 
 const launchbox = new Launchbox('your-api-key', 'prod'); // Use 'dev' for the development environment
 ```
+
 ### Functions
 
 1. `getChannelsByUserAddress` - Fetches channels associated with a user's address.
