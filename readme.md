@@ -9,13 +9,13 @@ The Launchbox SDK provides a set of functions to interact with Farcaster channel
 To install the Launchbox SDK, you need to include it in your project. Use npm or yarn to install the package:
 
 ```sh
-npm install channels-lib
+npm add channels-lib
 ```
 
 or using Yarn
 
 ```sh
-yarn install channels-lib
+yarn add channels-lib
 ```
 
 ## Initialization
