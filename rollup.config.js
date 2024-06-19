@@ -21,13 +21,13 @@ export default  {
     {
       file: 'dist/bundles/bundle.umd.js',
       format: 'umd',
-      name: 'myLibrary',
+      name: 'channelsLib',
       sourcemap: true
     },
     {
       file: 'dist/bundles/bundle.umd.min.js',
       format: 'umd',
-      name: 'myLibrary',
+      name: 'channelsLib',
       plugins: [terser()],
       sourcemap: true
     }
