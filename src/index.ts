@@ -42,7 +42,6 @@ export default class Launchbox {
 
       return response.data.FarcasterCasts.Cast;
     } catch (error) {
-      console.error('Failed to fetch casts:', error);
       throw new Error('Failed to fetch casts from the channel');
     }
   }
