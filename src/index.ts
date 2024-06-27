@@ -13,10 +13,10 @@ export default class Launchbox {
  * @returns {Promise<ChannelsByUserResponse['data']>} A promise that resolves to the data containing the channels associated with the user.
  * @throws Will throw an error if the query fails.
  */
-  public async getChannelsByUserAddress(owner: `0x${string}`): Promise<ChannelsByUserResponse['data']> {
+  public async getChannelsByUserAddress(owner: `0x${string}`, limit?: number): Promise<ChannelsByUserResponse['data']> {
     try {
       const { data: { Socials: { Social: socials } } }: UserInfoResponse = await fetchQuery(getUserInfoQuery(owner))
-      const { data }: ChannelsByUserResponse = await fetchQuery(getChannelsByUserQuery(socials[0].profileName))
+      const { data }: ChannelsByUserResponse = await fetchQuery(getChannelsByUserQuery(socials[0].profileName, limit))
       return data
     } catch (error) {
       throw new Error('Failed to channels created by user');
@@ -134,6 +134,7 @@ export default class Launchbox {
       const score = (tokenHolders.length + (averageEngagement * 1000.0) + (averageScore * 1000.0)) / 500.0
       return score
     } catch (error) {
+      console.log(error)
       throw error
     }
   }
