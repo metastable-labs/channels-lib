@@ -134,10 +134,10 @@ export interface ChannelsByUserResponse {
 }
 
 
-export const getChannelsByUserQuery = (name: string) => `
+export const getChannelsByUserQuery = (name: string, limit: number = 50) => `
 query GetFarcasterChannelsCreatedByUser {
   FarcasterChannels(
-    input: {blockchain: ALL, filter: {leadIdentity: {_eq: "fc_fname:${name}"}}, limit: 50}
+    input: {blockchain: ALL, filter: {leadIdentity: {_eq: "fc_fname:${name}"}}, limit: ${limit}}
   ) {
     FarcasterChannel {
       createdAtTimestamp
