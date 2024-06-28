@@ -18,78 +18,94 @@ or using Yarn
 yarn add channels-lib
 ```
 
-## Initialization
+## Usage
 
-To use the SDK, you need to initialize it with your API key and environment.
+Import the SDK and initialize with your API key:
 
-```ts
-import Launchbox from 'launchbox';
+```javascript
 
-const launchbox = new Launchbox('your-api-key', 'prod'); // Use 'dev' for the development environment
+import Launchbox from 'launchbox-sdk';
+
+const launchbox = new Launchbox('your-api-key');
+
+// Example: Fetch channels by user address
+const ownerAddress = '0x459D7FB72ac3dFB0666227B30F25A424A5583E9c';
+launchbox.getChannelsByUserAddress(ownerAddress)
+  .then(channels => {
+    console.log('Channels:', channels);
+  })
+  .catch(error => {
+    console.error('Error fetching channels:', error.message);
+  });
+
+// Example: Calculate social capital score for a channel
+const channelName = 'example_channel';
+const tokenAddress = '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85';
+launchbox.getChannelSocialCapital(channelName, tokenAddress)
+  .then(score => {
+    console.log('Social capital score:', score);
+  })
+  .catch(error => {
+    console.error('Error calculating social capital:', error.message);
+  });
 ```
 
-### Functions
+## API Reference
 
-1. `getChannelsByUserAddress` - Fetches channels associated with a user's address.
+- `getChannelsByUserAddress(owner: string, limit?: number): Promise<Channel[]>`
+Fetches channels associated with a user's Ethereum address.
 
-```ts
-/**
- * Fetches channels associated with a user's address.
- * @param {`0x${string}`} owner - The Ethereum address of the user in hexadecimal format.
- * @returns {Promise<ChannelsByUserResponse['data']>} A promise that resolves to the data containing the channels associated with the user.
- * @throws Will throw an error if the query fails.
- */
+- `getChannelCasts(channelName: string, limit?: number, date?: Date): Promise<Cast[]>`
+Fetches casts from a specified channel optionally filtered by limit and date.
 
-public async getChannelsByUserAddress(owner: `0x${string}`): Promise<ChannelsByUserResponse['data']>
-```
+- `getChannelSocialCapital(channelName: string, token: string): Promise<number>`
+Calculates the social capital score of a given channel based on participant metrics and engagement.
 
-2. `getCasts` -Fetches casts from a specified channel.
+- `getChannelParticipants(channelName: string, limit?: number): Promise<Participant[]>`
+Fetches participants and their token balances in a specified channel.
 
-```ts
-/**
- * Fetches casts from a specified channel.
- * @param {string} channelUrl - The URL of the channel to fetch casts from.
- * @returns {Promise<Cast[]>} An array of casts from the channel.
- * @throws Will throw an error if the query fails.
- */
-public async getCasts(channelUrl: string): Promise<Cast[]>
-```
+## Available Types
 
-3. `getNumberOfWeeklyCasts` - Fetches the number of casts in a channel made within the last week.
+```typescript
+export type Participant = {
+    profileName: string;
+    tokenBalances: {
+        address: string;
+        name: string;
+        decimals: number;
+        amount: string;
+    }[];
+    socialCapital?: {
+        socialCapitalScore: number;
+        socialCapitalRank: number
+    }
+}
 
-```ts
-/**
- * Fetches the number of casts in a channel made within the last week.
- * @param {string} channelUrl - The URL of the channel to fetch casts from.
- * @returns {Promise<number>} The number of casts made in the last week.
- * @throws Will throw an error if the query fails.
- */
-public async getNumberOfWeeklyCasts(channelUrl: string): Promise<number>
-```
 
-4. `getParticipantTokenBalances` - Fetches the token balances for participants in a given channel.
+export type Channel = {
+    createdAtTimestamp: string;
+    channelId: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+    leadIds: string[];
+    url: string;
+    dappName: string
+    casts?: Cast[]
+}
 
-```ts
-/**
- * Fetches the token balances for participants in a given channel.
- * @param {ParticipantTokenBalancesParams} params - The parameters for the query.
- * @returns {Promise<Participant[]>} The participants with their token balances.
- * @throws Will throw an error if the query fails.
- */
-public async getParticipantTokenBalances(params: ParticipantTokenBalancesParams): Promise<Participant[]>
-```
 
-5. `getChannelSocialCapital` - Fetches the social capital of a channel.
-
-```ts
-/**
- * Fetches the social capital of a channel.
- * @param {string} channelName - The name of the channel.
- * @param {string} [chain='base'] - The blockchain to query (default is 'base').
- * @param {`0x${string}`} token - The token address in hexadecimal format.
- * @param {number} [limit=50] - The maximum number of participants to fetch.
- * @returns {Promise<number>} The social capital score of the channel.
- * @throws Will throw an error if the query fails.
- */
-public async getChannelSocialCapital(channelName: string, chain: string = "base", token: `0x${string}`, limit: number = 50): Promise<number>
+export type Cast = {
+    castedAtTimestamp: string;
+    url: string;
+    text: string;
+    numberOfReplies: number;
+    numberOfRecasts: number;
+    numberOfLikes: number;
+    fid: string;
+    castedBy: {
+        profileName: string;
+        userAddress: string;
+    };
+}
 ```
