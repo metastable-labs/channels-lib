@@ -1,134 +1,68 @@
-/**
- * Interface representing the channel details.
- */
-export interface Channel {
-  createdAtTimestamp: string;
-  channelId: string;
-  name: string;
-  description: string;
-  imageUrl: string;
-  leadIds: string[];
-  url: string;
-  dappName: string
-}
 
+export interface ChannelCastsResponse {
 
-/**
- * Interface representing the profile of the user who casted the post.
- */
-export interface CastedBy {
-  /**
-   * The profile name of the user.
-   */
-  profileName: string;
-}
-
-/**
- * Interface representing a single cast in the Farcaster Cast.
- */
-export interface Cast {
-  /**
-   * The timestamp when the cast was made.
-   */
-  castedAtTimestamp: string;
-  /**
-   * The URL of the cast.
-   */
-  url: string;
-  /**
-   * The text content of the cast.
-   */
-  text: string;
-  /**
-   * The number of replies to the cast.
-   */
-  numberOfReplies: number;
-  /**
-   * The number of recasts (shares) of the cast.
-   */
-  numberOfRecasts: number;
-  /**
-   * The number of likes the cast received.
-   */
-  numberOfLikes: number;
-  /**
-   * The unique identifier (FID) of the cast.
-   */
-  fid: string;
-  /**
-   * The profile of the user who casted the post.
-   */
-  castedBy: CastedBy;
-  /**
-   * The channel details where the cast was made.
-   */
-  channel: Channel;
-}
-
-/**
- * Interface representing the Farcaster casts query response.
- */
-export interface FarcasterCastsResponse {
-  /**
-   * The data object containing the FarcasterCasts result.
-   */
   data: {
-    /**
-     * The FarcasterCasts object containing the list of casts.
-     */
     FarcasterCasts: {
-      /**
-       * The list of casts in the channel.
-       */
-      Cast: Cast[];
+      Cast: {
+        castedAtTimestamp: string;
+        url: string;
+        text: string;
+        numberOfReplies: number;
+        numberOfRecasts: number;
+        numberOfLikes: number;
+        fid: string;
+        castedBy: {
+          profileName: string;
+          userAddress: string;
+        };
+      }[];
     };
   };
 }
 
 
 
+export const getChannelCastsQuery = (channelName: string, limit: number = 50, date?: Date) => {
+  const dateFilter = date ? `, castedAtTimestamp: {_gte: "${date.toISOString()}"}` : '';
 
-
-
-export const getChannelCastsQuery = (channelUrl: string, limit: number = 50) => `
-query GetCastsInChannel {
-  FarcasterCasts(input: {blockchain: ALL, filter: {rootParentUrl: {_eq: "${channelUrl}"}}, limit: ${limit}}) {
-    Cast {
-      castedAtTimestamp
-      url
-      text
-      numberOfReplies
-      numberOfRecasts
-      numberOfLikes
-      fid
-      castedBy {
-        profileName
-        userAddress
-      }
-      channel {
-        name
-        createdAtTimestamp
-        channelId
-        name
-        description
-        imageUrl
-        leadIds
+  return `
+  query GetCastsInChannel {
+    FarcasterCasts(
+      input: {blockchain: ALL, filter: {rootParentUrl: {_eq: "https://warpcast.com/~/channel/${channelName}"}${dateFilter}}, limit: ${limit}}
+    ) {
+      Cast {
+        castedAtTimestamp
         url
-        dappName
-        followerCount
+        text
+        numberOfReplies
+        numberOfRecasts
+        numberOfLikes
+        fid
+        castedBy {
+          profileName
+          userAddress
+        }
       }
     }
   }
-}
-`;
-
+  `;
+};
 
 
 
 export interface ChannelsByUserResponse {
   data: {
     FarcasterChannels: {
-      FarcasterChannel: Channel[];
+      FarcasterChannel: {
+        createdAtTimestamp: string;
+        channelId: string;
+        name: string;
+        description: string;
+        imageUrl: string;
+        leadIds: string[];
+        url: string;
+        dappName: string
+      }[];
     };
   };
 }
@@ -152,3 +86,84 @@ query GetFarcasterChannelsCreatedByUser {
     }
   }
 }`
+
+
+
+export interface ChannelParticipantsResponse {
+  data: {
+    FarcasterChannelParticipants: {
+      FarcasterChannelParticipant: {
+        participant: {
+          socialCapital: {
+            socialCapitalScore: number;
+            socialCapitalRank: number
+          }
+          profileName: string;
+          userAssociatedAddressDetails: {
+            tokenBalances: {
+              token: {
+                address: string;
+                name: string;
+                decimals: number;
+              };
+              amount: string;
+            }[];
+            addresses: string[];
+          }[];
+          userAddressDetails: {
+            tokenBalances: {
+              token: {
+                address: string;
+                name: string;
+                decimals: number;
+              };
+              amount: string;
+            }[];
+          };
+        };
+      }[];
+    };
+  };
+}
+
+
+export const getChannelParticipantsQuery = (channelName: string, limit: number = 10) => `
+query ChannelParticipants {
+  FarcasterChannelParticipants(
+    input: {filter: {channelName: {_eq: "${channelName}"}}, blockchain: ALL, limit: ${limit}}
+  ) {
+    FarcasterChannelParticipant {
+      participant {
+        profileName
+        userAssociatedAddressDetails {
+          tokenBalances {
+            token {
+              address
+              name
+              decimals
+            }
+            amount
+          }
+          addresses
+        }
+        userAddressDetails {
+          tokenBalances {
+            amount
+            token {
+              decimals
+              name
+              address
+            }
+          }
+        }
+       socialCapital {
+          socialCapitalScore
+          socialCapitalRank
+        }
+      }
+    }
+  }
+}
+`
+
+
