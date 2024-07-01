@@ -22,8 +22,11 @@ export interface ChannelCastsResponse {
 
 
 
-export const getChannelCastsQuery = (channelName: string, limit: number = 50, date?: Date) => {
-  const dateFilter = date ? `, castedAtTimestamp: {_gte: "${date.toISOString()}"}` : '';
+export const getChannelCastsQuery = (channelName: string, limit: number = 50, startDate?: Date, endDate?: Date) => {
+
+  let end = endDate ? endDate.toISOString() : new Date().toISOString()
+
+  let dateFilter = startDate ? `, castedAtTimestamp: {_gte: "${startDate.toISOString()}", _lte: "${end}"}` : '';
 
   return `
   query GetCastsInChannel {

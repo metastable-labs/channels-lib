@@ -1,6 +1,7 @@
 import { fetchQuery, init } from '@airstack/node';
 import { ChannelCastsResponse, ChannelParticipantsResponse, ChannelsByUserResponse, getChannelCastsQuery, getChannelParticipantsQuery, getChannelsByUserQuery, getUserInfoQuery, UserInfoResponse } from "./query";
 import { Cast, Channel, Participant } from "./types";
+export * from './types';
 export default class Launchbox {
   constructor(key: string, env: 'dev' | 'prod' = 'prod') {
     init(key, env);
@@ -42,13 +43,14 @@ export default class Launchbox {
    * Fetches casts from a specified channel.
    * @param {string} channelName - The name of the channel to fetch casts from.
    * @param {number} [limit=50] - The maximum number of casts to fetch.
-   * @param {Date} date - Optional date, Only fetch casts older than the date given
+   * @param {Date} startDate - Optional date, Only fetch casts older than the date given
+   * @param {Date} endDate - Optional date, Only fetch casts older than the date given
    * @returns {Promise<Cast[]>} A promise that resolves to an array of casts from the channel.
    * @throws Will throw an error if the query fails.
    */
-  public async getChannelCasts(channelName: string, limit?: number, date?: Date): Promise<Cast[]> {
+  public async getChannelCasts(channelName: string, limit?: number, startDate?: Date, endDate?: Date): Promise<Cast[]> {
     try {
-      const query = getChannelCastsQuery(channelName, limit, date);
+      const query = getChannelCastsQuery(channelName, limit, startDate, endDate);
       const response: ChannelCastsResponse = await fetchQuery(query);
       return response.data.FarcasterCasts.Cast;
     } catch (error) {
