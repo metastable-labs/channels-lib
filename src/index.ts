@@ -1,6 +1,7 @@
 import { fetchQuery, init } from '@airstack/node';
 import { ChannelCastsResponse, ChannelParticipantsResponse, ChannelsByUserResponse, getChannelCastsQuery, getChannelParticipantsQuery, getChannelsByUserQuery, getUserInfoQuery, UserInfoResponse } from "./query";
 import { Cast, Channel, Participant } from "./types";
+export * from './types';
 export default class Launchbox {
   constructor(key: string, env: 'dev' | 'prod' = 'prod') {
     init(key, env);
