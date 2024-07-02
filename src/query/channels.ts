@@ -14,6 +14,7 @@ export interface ChannelCastsResponse {
         castedBy: {
           profileName: string;
           userAddress: string;
+          profileImage: string;
         };
       }[];
     };
@@ -44,6 +45,7 @@ export const getChannelCastsQuery = (channelName: string, limit: number = 50, st
         castedBy {
           profileName
           userAddress
+          profileImage
         }
       }
     }
