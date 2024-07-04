@@ -1,6 +1,6 @@
 {
   "name": "channels-lib",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "A Library that abstracts farcaster channel actions and data",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
