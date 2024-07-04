@@ -37,5 +37,6 @@ export type Cast = {
     castedBy: {
         profileName: string;
         userAddress: string;
+        profileImage: string;
     };
 }
