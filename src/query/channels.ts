@@ -1,6 +1,4 @@
-
 export interface ChannelCastsResponse {
-
   data: {
     FarcasterCasts: {
       Cast: {
@@ -21,13 +19,17 @@ export interface ChannelCastsResponse {
   };
 }
 
+export const getChannelCastsQuery = (
+  channelName: string,
+  limit: number = 50,
+  startDate?: Date,
+  endDate?: Date,
+) => {
+  let end = endDate ? endDate.toISOString() : new Date().toISOString();
 
-
-export const getChannelCastsQuery = (channelName: string, limit: number = 50, startDate?: Date, endDate?: Date) => {
-
-  let end = endDate ? endDate.toISOString() : new Date().toISOString()
-
-  let dateFilter = startDate ? `, castedAtTimestamp: {_gte: "${startDate.toISOString()}", _lte: "${end}"}` : '';
+  let dateFilter = startDate
+    ? `, castedAtTimestamp: {_gte: "${startDate.toISOString()}", _lte: "${end}"}`
+    : '';
 
   return `
   query GetCastsInChannel {
@@ -53,8 +55,6 @@ export const getChannelCastsQuery = (channelName: string, limit: number = 50, st
   `;
 };
 
-
-
 export interface ChannelsByUserResponse {
   data: {
     FarcasterChannels: {
@@ -66,12 +66,11 @@ export interface ChannelsByUserResponse {
         imageUrl: string;
         leadIds: string[];
         url: string;
-        dappName: string
+        dappName: string;
       }[];
     };
   };
 }
-
 
 export const getChannelsByUserQuery = (name: string, limit: number = 50) => `
 query GetFarcasterChannelsCreatedByUser {
@@ -90,9 +89,7 @@ query GetFarcasterChannelsCreatedByUser {
       followerCount
     }
   }
-}`
-
-
+}`;
 
 export interface ChannelParticipantsResponse {
   data: {
@@ -101,8 +98,8 @@ export interface ChannelParticipantsResponse {
         participant: {
           socialCapital: {
             socialCapitalScore: number;
-            socialCapitalRank: number
-          }
+            socialCapitalRank: number;
+          };
           profileName: string;
           userAssociatedAddressDetails: {
             tokenBalances: {
@@ -113,7 +110,6 @@ export interface ChannelParticipantsResponse {
               };
               amount: string;
             }[];
-            addresses: string[];
           }[];
           userAddressDetails: {
             tokenBalances: {
@@ -124,13 +120,13 @@ export interface ChannelParticipantsResponse {
               };
               amount: string;
             }[];
+            addresses: string[];
           };
         };
       }[];
     };
   };
 }
-
 
 export const getChannelParticipantsQuery = (channelName: string, limit: number = 10) => `
 query ChannelParticipants {
@@ -149,7 +145,6 @@ query ChannelParticipants {
             }
             amount
           }
-          addresses
         }
         userAddressDetails {
           tokenBalances {
@@ -160,6 +155,7 @@ query ChannelParticipants {
               address
             }
           }
+          addresses
         }
        socialCapital {
           socialCapitalScore
@@ -169,6 +165,4 @@ query ChannelParticipants {
     }
   }
 }
-`
-
-
+`;
